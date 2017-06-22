@@ -1,13 +1,13 @@
 function gotCurrencies(data, textStatus) {
 	if (Array.isArray(data.currencies) && data.currencies.length > 0) {
-		$("#OuterContainer").append("<div id='dropListContainer' > </div>");
+		$("#OuterContainer").append("<div id='dropListContainer' class='form-group'> </div>");
 		$("#dropListContainer").append("<div><div id='Caption' class='col-md-12 text-center'><h2> Exchange </h2></div></div>");
 		$("#dropListContainer").append(
 				"<div id='fromCurrency' class='col-md-6 text-center bg-info'> </div>");
 		$("#dropListContainer").append(
 				"<div id='toCurrency' class='col-md-6 text-center bg-info'> </div>");
-		$("#fromCurrency").append("From: <select id='fromCurrencyList'></select>");
-		$("#toCurrency").append("To: <select id='toCurrencyList'></select>");
+		$("#fromCurrency").append("From: <select id='fromCurrencyList' class='form-control'></select>");
+		$("#toCurrency").append("To: <select id='toCurrencyList' class='form-control'></select>");
 		for (i=0; i< data.currencies.length; i++) {
 			$("#fromCurrencyList").append(
 					"<option value='" + data.currencies[i] + "'>" + data.currencies[i] + "</option>");
@@ -88,7 +88,8 @@ $(function() {
 		url : './currency/getall',
 		dataType : "json",
 		success : gotCurrencies,
-		failure: failedToGetCurrencies
+		failure: failedToGetCurrencies,
+		error: failedToGetCurrencies
 	});
 
 })

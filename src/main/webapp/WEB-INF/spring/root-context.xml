@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:lang="http://www.springframework.org/schema/lang"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+					http://www.springframework.org/schema/beans/spring-beans.xsd
+					http://www.springframework.org/schema/aop
+					http://www.springframework.org/schema/aop/spring-aop.xsd
+					http://www.springframework.org/schema/context
+					http://www.springframework.org/schema/context/spring-context.xsd
+					http://www.springframework.org/schema/jee
+					http://www.springframework.org/schema/jee/spring-jee.xsd
+					http://www.springframework.org/schema/lang
+					http://www.springframework.org/schema/lang/spring-lang.xsd
+					http://www.springframework.org/schema/tx
+					http://www.springframework.org/schema/tx/spring-tx.xsd
+					http://www.springframework.org/schema/util
+					http://www.springframework.org/schema/util/spring-util.xsd
+					http://www.springframework.org/schema/task 
+					http://www.springframework.org/schema/task/spring-task.xsd">	
+	
+	<bean id="CurrencyApi"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		 <property name="persistenceUnitName" value="currencyApiUnit"/>
+		<property name="loadTimeWeaver">
+            <bean class="org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver"/>
+        </property>
+		<property name="packagesToScan" value="test.kapital.merit.entity" />
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
+		</property>
+		<property name="jpaProperties">
+			<props>
+				<!-- First run with create-drop recommended. Then stop, comment/change to update the following line, and restart  -->
+				<prop key="hibernate.hbm2ddl.auto">update</prop> 
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<bean id="connectionPoolDataSource" class="org.apache.commons.dbcp.cpdsadapter.DriverAdapterCPDS">
+		<property name="driver">
+			<value>com.mysql.jdbc.Driver</value>
+		</property>
+		<property name="url">
+			<value>jdbc:mysql://localhost:3306/curr_exchange?useUnicode=yes&amp;characterEncoding=UTF-8&amp;useJDBCCompliantTimezoneShift=true&amp;serverTimezone=GMT&amp;useLegacyDatetimeCode=false
+			</value>
+		</property>
+		<property name="user">
+			<value>testuser</value>
+		</property>
+		<property name="password">
+			<value>testpass</value>
+		</property>
+	</bean>
+	
+	<bean id="dataSource"
+		class="org.apache.commons.dbcp.datasources.SharedPoolDataSource">
+		<property name="connectionPoolDataSource" ref="connectionPoolDataSource"/>
+		<property name="defaultAutoCommit" value="true" />
+		<property name="maxActive" value="100" />
+		<property name="timeBetweenEvictionRunsMillis" value="3600000" />
+		<property name="minEvictableIdleTimeMillis" value="3600000" />
+		<property name="testWhileIdle" value="true" />
+	</bean>	
+	
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="CurrencyApi" />
+		<property name="globalRollbackOnParticipationFailure" value="false" />
+	</bean>
+
+	<tx:annotation-driven/>
+		
+	<context:component-scan base-package="test.kapital.merit.entity" />	
+	<context:component-scan base-package="test.kapital.merit.DAO" />
+	<context:component-scan base-package="test.kapital.merit.DAO.interfaces" />
+	<context:component-scan base-package="test.kapital.merit.managers" />
+	<context:component-scan base-package="test.kapital.merit.managers.interfaces" />
+	<context:component-scan base-package="test.kapital.merit.json" />
+</beans>
